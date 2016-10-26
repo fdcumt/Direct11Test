@@ -29,7 +29,7 @@ bool Dx11DemoBase::Initialize(HINSTANCE hInstance, HWND hwnd)
 	// 注意一下：窗口的客户区为窗口中除标题栏、菜单栏之外的地方。
 	GetClientRect(hwnd, &dimensions);
 
-	unsigned int width = dimensions.right - dimensions.left;  // 客户区宽
+	unsigned int width  = dimensions.right - dimensions.left;  // 客户区宽
 	unsigned int height = dimensions.bottom - dimensions.top; // 客户区高
 
 
@@ -43,7 +43,7 @@ bool Dx11DemoBase::Initialize(HINSTANCE hInstance, HWND hwnd)
 	};
 
 	// 初始化d3d11特性等级
-	D3D_FEATURE_LEVEL m_featureLeve[] = 
+	D3D_FEATURE_LEVEL featureLeves[] = 
 	{
 		D3D_FEATURE_LEVEL_11_0,
 		D3D_FEATURE_LEVEL_10_1,
@@ -54,7 +54,53 @@ bool Dx11DemoBase::Initialize(HINSTANCE hInstance, HWND hwnd)
 	DXGI_SWAP_CHAIN_DESC swapChainDesc; 
 	ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
 
-	swapChainDesc.BufferCount = 1;
+	swapChainDesc.BufferCount = 1;  // 缓冲区数量
+	swapChainDesc.BufferDesc.Width = width;   // 缓冲区宽
+	swapChainDesc.BufferDesc.Height = height; // 缓冲区高
+	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // 缓冲区格式
+	swapChainDesc.BufferDesc.RefreshRate.Numerator = 60;  // 刷新频率的分子
+	swapChainDesc.BufferDesc.RefreshRate.Denominator = 1; // 刷新频率的分母
+	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;  // Means this swap chain will be used as output
+	swapChainDesc.OutputWindow = hwnd;
+	swapChainDesc.Windowed = true;
+	swapChainDesc.SampleDesc.Count = 1; 
+	swapChainDesc.SampleDesc.Quality = 0;
+
+	unsigned int creationFlag = 0;
+#ifdef _DEBUG
+	creationFlag = D3D11_CREATE_DEVICE_DEBUG;
+#endif
+
+	HRESULT result;
+	int nTotalDriverTypes = ARRAYSIZE(driverTypes);
+	int nTotalFeatureLevels = ARRAYSIZE(featureLeves);
+
+	// 找到一个可用的最优的设备
+	for (int driver = 0; driver<nTotalDriverTypes; ++driver)
+	{
+		result = D3D11CreateDeviceAndSwapChain(
+			0, driverTypes[driver], 0, creationFlag, featureLeves, nTotalFeatureLevels,
+			D3D11_SDK_VERSION, &swapChainDesc, &m_swapChain, &m_d3dDevice, &m_featureLevel, *m_d3dContext);
+		if (SUCCEEDED(result))
+		{
+			m_driverType = driverTypes[driver];
+			break;
+		}
+	}
+
+	// 如果没找到设备就结束程序,并报错
+	if (FAILED(result))
+	{
+		DXTRACE_MSG("Failed to create the Direct3D device!");
+		return false;
+	}
+
+
+
+
+
+
+
 
 
 
