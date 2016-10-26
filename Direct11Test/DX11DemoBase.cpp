@@ -80,7 +80,7 @@ bool Dx11DemoBase::Initialize(HINSTANCE hInstance, HWND hwnd)
 	{
 		result = D3D11CreateDeviceAndSwapChain(
 			0, driverTypes[driver], 0, creationFlag, featureLeves, nTotalFeatureLevels,
-			D3D11_SDK_VERSION, &swapChainDesc, &m_swapChain, &m_d3dDevice, &m_featureLevel, *m_d3dContext);
+			D3D11_SDK_VERSION, &swapChainDesc, &m_swapChain, &m_d3dDevice, &m_featureLevel, &m_d3dContext);
 		if (SUCCEEDED(result))
 		{
 			m_driverType = driverTypes[driver];
@@ -96,8 +96,44 @@ bool Dx11DemoBase::Initialize(HINSTANCE hInstance, HWND hwnd)
 	}
 
 
+	ID3D11Texture2D *backBufferTexture;
 
 
+	// 获取swap buff池,保存在backBufferTexture中
+	result = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBufferTexture);
+	if (FAILED(result))
+	{
+		DXTRACE_MSG("Failed to get the swap chain back buffer!");
+		return false;
+	}
+
+	// 用get到的buff(backBufferTexture)创建渲染目标,并保存在全局bufferTargetView中
+	result = m_d3dDevice->CreateRenderTargetView(backBufferTexture, 0, &m_backBufferTarget);
+
+	if(backBufferTexture)
+	{  // 引用计数-1
+		backBufferTexture->Release();
+	}
+
+	if (FAILED(result))
+	{
+		DXTRACE_MSG("Failed to create the render target view!");
+		return false;
+	}
+
+	// 将渲染目标绑定到管线的输出合并阶段
+	m_d3dContext->OMSetRenderTargets(1, &m_backBufferTarget, 0);
+
+	//设置视口
+	D3D11_VIEWPORT viewPort;
+	viewPort.Width = width;
+	viewPort.Height = height;
+	viewPort.MinDepth = 0.0f;
+	viewPort.MaxDepth = 1.0f;
+	viewPort.TopLeftX = 0.0f;
+	viewPort.TopLeftY = 0.0f;
+
+	m_d3dContext->RSSetViewports(1, &viewPort);
 
 
 
