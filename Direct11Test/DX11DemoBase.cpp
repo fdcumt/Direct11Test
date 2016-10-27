@@ -135,12 +135,30 @@ bool Dx11DemoBase::Initialize(HINSTANCE hInstance, HWND hwnd)
 
 	m_d3dContext->RSSetViewports(1, &viewPort);
 
-
-
-
-
-
-
+	return Loadcontent();
 }
 
+void Dx11DemoBase::Shutdown()
+{
+	if (m_backBufferTarget)  m_backBufferTarget->Release();
+	if (m_swapChain) m_swapChain->Release();
+	if (m_d3dContext) m_d3dContext->Release();
+	if (m_d3dDevice) m_d3dDevice->Release();
+
+	m_d3dDevice = NULL;
+	m_d3dContext = NULL;
+	m_swapChain = NULL;
+	m_backBufferTarget = NULL;
+}
+
+bool Dx11DemoBase::Loadcontent()
+{
+	// override with demo specifics, if any ...
+	return true;
+}
+
+void Dx11DemoBase::UnloadContent()
+{
+	// Override with demo specifics, if any...
+}
 

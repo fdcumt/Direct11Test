@@ -11,6 +11,9 @@
     <Filter Include="DemoBase">
       <UniqueIdentifier>{950dec2b-e1bd-40a9-9456-36db27f11de2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="BlankDemo">
+      <UniqueIdentifier>{623291df-5d66-4e5e-90da-8c7a6f9f1020}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -19,10 +22,16 @@
     <ClCompile Include="DX11DemoBase.cpp">
       <Filter>DemoBase</Filter>
     </ClCompile>
+    <ClCompile Include="BlankDemo.cpp">
+      <Filter>BlankDemo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX11DemoBase.h">
       <Filter>DemoBase</Filter>
+    </ClInclude>
+    <ClInclude Include="BlankDemo.h">
+      <Filter>BlankDemo</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
