@@ -1,4 +1,5 @@
 
+#include "BlankDemo.h"
 
 #include <windows.h>
 
@@ -57,6 +58,15 @@ int WINAPI wWinMain(
 
 	ShowWindow(hwnd, nShowCmd);
 
+	// demo initialize
+	BlankDemo blankDemo;
+	bool result = blankDemo.Initialize(hInstance, hwnd);
+	if (result == false)
+	{
+		return -1;
+	}
+
+
 	MSG msg = { 0 };
 	while (msg.message != WM_QUIT)
 	{
@@ -65,7 +75,15 @@ int WINAPI wWinMain(
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+
+		// 空白框进行更新渲染
+		blankDemo.Update(0.0f);
+		blankDemo.Render();
 	}
+
+
+	// 释放demo占用资源
+	blankDemo.Shutdown();
 
 	return static_cast<int>(msg.wParam);
 
@@ -95,6 +113,8 @@ LRESULT CALLBACK WndProc(
 		return DefWindowProc(hwnd, message, wParam, lParam);
 	}
 
+
+	
 	return 0;
 
 }

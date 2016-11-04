@@ -7,7 +7,7 @@
 #include "DX11DemoBase.h"
 #include <xnamath.h>
 
-class BlankDemo : Dx11DemoBase
+class BlankDemo : public Dx11DemoBase
 {
 public:
 	BlankDemo();
